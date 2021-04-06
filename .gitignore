@@ -7,8 +7,8 @@
 /bin/
 
 # Other build files
-/assets/*.iconset
-/assets/*.icns
+*.iconset
+*.icns
 pkged.go
 
 # Logs
