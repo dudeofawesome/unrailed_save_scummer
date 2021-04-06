@@ -4,6 +4,7 @@
     "Unrailed",
     "beeep",
     "fsnotify",
-    "notificator"
+    "notificator",
+    "pkger"
   ]
 }
