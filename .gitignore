@@ -9,6 +9,7 @@
 # Other build files
 /assets/*.iconset
 /assets/*.icns
+pkged.go
 
 # Logs
 *.log

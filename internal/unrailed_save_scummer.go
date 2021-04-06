@@ -183,6 +183,8 @@ func backupSave(saveSlot int)  {
   dest, err := os.Create(path.Join(backupsDir, fmt.Sprintf("SLOT%d-0.sav", saveSlot)))
   if err != nil { log.Panicf("Couldn't create backups/SLOT%d-0.sav", saveSlot) }
   io.Copy(dest, src)
+  src.Close()
+  dest.Close()
 }
 
 func rotateSaves(saveSlot int) {
@@ -225,6 +227,8 @@ func restoreSave(saveSlot int, backupSlot int) {
   dest, err := os.Create(path.Join(saveDir, fmt.Sprintf("SLOT%d.sav", saveSlot)))
   if err != nil { log.Panicf("Couldn't create SLOT%d.sav", saveSlot) }
   io.Copy(dest, src)
+  src.Close()
+  dest.Close()
 }
 
 func handlePanic() {
