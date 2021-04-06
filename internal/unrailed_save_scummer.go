@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -22,19 +21,29 @@ import (
 
 var saveDir = ""
 var backupsDir = ""
+var assetDir = ""
 var maxBackups = 5
 
 func Setup() {
   log.Println("Starting")
 
   user, _ := user.Current()
+  cwd, _ := os.Getwd()
+
   switch runtime.GOOS {
     case "darwin":
       saveDir = user.HomeDir + "/Library/Application Support/UnrailedGame/GameState/AllPlayers/SaveGames/"
+
+      assetDir = path.Join(cwd, "Resources")
+      if _, err := os.Stat(assetDir); os.IsNotExist(err) {
+        assetDir = path.Join(cwd, "assets")
+      }
     case "windows":
       saveDir = user.HomeDir + "\\AppData\\Local\\Daedalic Entertainment GmbH\\Unrailed\\GameState\\AllPlayers\\SaveGames\\"
+        assetDir = path.Join(cwd, "assets")
     default:
       saveDir = user.HomeDir + "/.local/share/UnrailedGame/GameSate/AllPlayers/SaveGames/"
+        assetDir = path.Join(cwd, "assets")
   }
   backupsDir = path.Join(saveDir, "backups")
 
@@ -45,8 +54,8 @@ func Setup() {
 func setupTrayIcon() {
   log.Println("Setup tray icon")
 
-  iconNixData, _ := ioutil.ReadFile("./assets/icon-template.png")
-  iconWinData, _ := ioutil.ReadFile("./assets/icon.ico")
+  iconNixData, _ := os.ReadFile(path.Join(assetDir, "icon-template.png"))
+  iconWinData, _ := os.ReadFile(path.Join(assetDir, "icon.ico"))
 
   systray.Run(func() {
     switch runtime.GOOS {
@@ -120,7 +129,7 @@ func setupFileWatcher() {
             if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
               // save file was created or modified
               log.Println("modified file:", event.Name)
-              beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Backing up slot %d", slotNum), "./assets/icon.png")
+              beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Backing up slot %d", slotNum), path.Join(assetDir, "/icon.png"))
               rotateSaves(slotNum)
               backupSave(slotNum)
             } else if
@@ -137,9 +146,9 @@ func setupFileWatcher() {
 
               if err == nil {
                 restoreSave(slotNum, 0)
-                beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Restored slot %d", slotNum), "./assets/icon.png")
+                beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Restored slot %d", slotNum), path.Join(assetDir, "/icon.png"))
               } else {
-                beeep.Alert("Unrailed Save Scummer", fmt.Sprintf("No backup for slot %d to restore!", slotNum), "./assets/icon.png")
+                beeep.Alert("Unrailed Save Scummer", fmt.Sprintf("No backup for slot %d to restore!", slotNum), path.Join(assetDir, "/icon.png"))
               }
             }
           }
@@ -220,6 +229,6 @@ func restoreSave(saveSlot int, backupSlot int) {
 
 func handlePanic() {
   if r := recover(); r != nil {
-    beeep.Alert("Unrailed Save Scummer", fmt.Sprint(r), "./assets/icon.png")
+    beeep.Alert("Unrailed Save Scummer", fmt.Sprint(r), path.Join(assetDir, "/icon.png"))
   }
 }
