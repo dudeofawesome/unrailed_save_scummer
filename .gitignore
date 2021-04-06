@@ -4,6 +4,11 @@
 *.dll
 *.so
 *.dylib
+/bin/
+
+# Other build files
+/assets/*.iconset
+/assets/*.icns
 
 # Logs
 *.log
