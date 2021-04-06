@@ -6,11 +6,11 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/dudeofawesome/unrailed-save-scummer/internal"
+	"github.com/dudeofawesome/unrailed_save_scummer/internal"
 )
 
 func main()  {
-  // log, err := os.Create("/Users/dudeofawesome/unrailed-save-scummer.log")
+  // log, err := os.Create("/Users/dudeofawesome/unrailed_save_scummer.log")
   // if err != nil {
   //   log.WriteString(fmt.Sprint(err) + "\n")
   // }
