@@ -17,6 +17,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/gen2brain/beeep"
 	"github.com/getlantern/systray"
+	"github.com/markbates/pkger"
 )
 
 var saveDir = ""
@@ -26,6 +27,8 @@ var maxBackups = 5
 
 func Setup() {
   log.Println("Starting")
+
+  beeep.Notify("Unrailed Save Scummer", "Starting", path.Join(assetDir, "/icon.png"))
 
   user, _ := user.Current()
   cwd, _ := os.Getwd()
@@ -54,18 +57,21 @@ func Setup() {
 func setupTrayIcon() {
   log.Println("Setup tray icon")
 
-  iconNixData, _ := os.ReadFile(path.Join(assetDir, "icon-template.png"))
-  iconWinData, _ := os.ReadFile(path.Join(assetDir, "icon.ico"))
+  iconDataFile, err := pkger.Open("/assets/icon-template.png")
+  if err != nil {
+    log.Panic(err)
+  }
+
+  stat, _ := iconDataFile.Stat()
+  iconData := make([]byte, stat.Size())
+  _, err = iconDataFile.Read(iconData)
+  if err != nil {
+    log.Panic(err)
+  }
+  iconDataFile.Close()
 
   systray.Run(func() {
-    switch runtime.GOOS {
-    case "windows":
-      systray.SetIcon(iconWinData)
-    case "darwin":
-      systray.SetTemplateIcon(iconNixData, iconNixData)
-    default:
-      systray.SetIcon(iconNixData)
-    }
+    systray.SetTemplateIcon(iconData, iconData)
     systray.SetTooltip("Unrailed Save Scummer")
 
     mAbout := systray.AddMenuItem("About Unrailed Save Scummer", "The fastest save scummer in the west")
@@ -86,7 +92,7 @@ func setupTrayIcon() {
             default:
                 cmd = "xdg-open"
           }
-          args = append(args, "https://github.com/dudeofawesome/unrailed-save-scummer")
+          args = append(args, "https://github.com/dudeofawesome/unrailed_save_scummer")
           exec.Command(cmd, args...).Start()
         case <-mQuit.ClickedCh:
           log.Println("Quitting")
