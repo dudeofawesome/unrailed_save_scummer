@@ -29,5 +29,6 @@ jobs:
             bin/unrailed-save-scummer-amd64-windows.exe
             bin/unrailed-save-scummer-amd64-darwin.dmg
             bin/unrailed-save-scummer-amd64-linux
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
