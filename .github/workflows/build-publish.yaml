@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install System Dependencies
-        uses: mstksg/get-package@v1
+        uses: delgurth/get-package@v5.0.2
         with:
           brew: libicns create-dmg
           apt-get: icnsutils genisoimage
