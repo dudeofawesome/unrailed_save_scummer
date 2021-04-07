@@ -12,8 +12,7 @@ mkdir -p "$mac_app_contents_dir/"{MacOS,Resources}
 
 # build ICNS
 mkdir "./assets/images/icon.iconset"
-for size in 64 128 256; do
-  # sips -z "$size" "$size" "./assets/images/icon.png" --out "./assets/images/icon.iconset/icon_${size}x${size}.png"
+for size in 128 256; do
   convert "./assets/images/icon.png" -resize "${size}x${size}" "./assets/images/icon.iconset/icon_${size}x${size}.png"
 done
 png2icns "./assets/images/icon.icns" "./assets/images/icon.iconset/"*.png
@@ -60,7 +59,7 @@ case "$(uname)" in
   # mkfs.hfsplus -v ThisIsFoo /tmp/foo.dmg
   genisoimage \
     -V "Unrailed Save Scummer" -D -R -apple -no-pad \
-    -o "./bin/unrailed-save-scummer-amd64-darwin.dmg" "$mac_app_dir"
+    -o "./bin/unrailed-save-scummer-amd64-darwin.dmg" "$mac_dir"
   ;;
 *)
   >&2 echo "Unknown build platform!"

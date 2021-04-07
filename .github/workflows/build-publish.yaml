@@ -14,9 +14,12 @@ jobs:
         with:
           brew: libicns create-dmg imagemagick
           apt-get: icnsutils genisoimage imagemagick
-      - uses: actions/setup-go@v2
+      - name: Install Golang
+        uses: actions/setup-go@v2
         with:
           go-version: '~1.16.2'
+      - name: Install global Golang Dependencies
+        run: go get github.com/markbates/pkger/cmd/pkger
 
       - name: Build
         run: ./dev/ci/build.sh
