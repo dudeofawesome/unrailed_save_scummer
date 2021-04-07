@@ -57,7 +57,7 @@ func Setup() {
 func setupTrayIcon() {
   log.Println("Setup tray icon")
 
-  iconDataFile, err := pkger.Open("/assets/icon-template.png")
+  iconDataFile, err := pkger.Open("/assets/images/icon-template.png")
   if err != nil {
     log.Panic(err)
   }
