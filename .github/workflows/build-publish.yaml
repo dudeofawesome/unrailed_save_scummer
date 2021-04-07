@@ -12,8 +12,8 @@ jobs:
       - name: Install System Dependencies
         uses: delgurth/get-package@v5.0.2
         with:
-          brew: libicns create-dmg
-          apt-get: icnsutils genisoimage
+          brew: libicns create-dmg imagemagick
+          apt-get: icnsutils genisoimage imagemagick
       - uses: actions/setup-go@v2
         with:
           go-version: '~1.16.2'

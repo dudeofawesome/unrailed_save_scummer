@@ -12,8 +12,9 @@ mkdir -p "$mac_app_contents_dir/"{MacOS,Resources}
 
 # build ICNS
 mkdir "./assets/images/icon.iconset"
-for size in 128 256 512; do
-  sips -z "$size" "$size" "./assets/images/icon.png" --out "./assets/images/icon.iconset/icon_${size}x${size}.png"
+for size in 64 128 256; do
+  # sips -z "$size" "$size" "./assets/images/icon.png" --out "./assets/images/icon.iconset/icon_${size}x${size}.png"
+  convert "./assets/images/icon.png" -resize "${size}x${size}" "./assets/images/icon.iconset/icon_${size}x${size}.png"
 done
 png2icns "./assets/images/icon.icns" "./assets/images/icon.iconset/"*.png
 cp "./assets/images/icon.icns" "$mac_dir/.VolumeIcon.icns"
