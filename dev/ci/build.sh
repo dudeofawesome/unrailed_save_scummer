@@ -35,13 +35,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 # build
-echo "Building binary"
 case "$OSTYPE" in
 linux*)
+  echo "Building Linux binary"
   go build -o "./bin/unrailed-save-scummer-amd64-linux" .
+  echo "Building Windows binary"
   go build -o "./bin/unrailed-save-scummer-amd64-windows.exe" .
   ;;
 darwin*)
+  echo "Building macOS binary"
   go build -o "$mac_app_contents_dir/MacOS/unrailed-save-scummer-amd64-darwin" .
  ;;
 esac
