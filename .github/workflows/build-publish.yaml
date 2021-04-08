@@ -8,6 +8,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Set env
+        run: echo "PRERELEASE=$(echo true)" >> $GITHUB_ENV
 
       - name: Install System Dependencies
         uses: delgurth/get-package@v5.0.2
@@ -32,6 +34,6 @@ jobs:
             bin/unrailed-save-scummer-amd64-windows.exe
             bin/unrailed-save-scummer-amd64-darwin.dmg
             bin/unrailed-save-scummer-amd64-linux
-          prerelease: true
+          prerelease: ${{ env.PRERELEASE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
