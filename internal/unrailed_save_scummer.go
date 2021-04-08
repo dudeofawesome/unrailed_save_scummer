@@ -13,6 +13,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gen2brain/beeep"
@@ -24,6 +25,7 @@ var saveDir = ""
 var backupsDir = ""
 var assetDir = ""
 var maxBackups = 5
+var lastRestoreTime = time.Now().Unix()
 
 func Setup() {
   log.Println("Starting")
@@ -130,31 +132,34 @@ func setupFileWatcher() {
 
           // make sure we're talking about a save game
           if (slotNumTest != nil) {
-            slotNum, _ := strconv.Atoi(slotNumTest[0][1])
+            // make sure we didn't cause this event
+            if (lastRestoreTime + 1 < time.Now().Unix()) {
+              slotNum, _ := strconv.Atoi(slotNumTest[0][1])
 
-            if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
-              // save file was created or modified
-              log.Println("modified file:", event.Name)
-              beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Backing up slot %d", slotNum), path.Join(assetDir, "/icon.png"))
-              rotateSaves(slotNum)
-              backupSave(slotNum)
-            } else if
-                event.Op&fsnotify.Remove == fsnotify.Remove ||
-                // macOS seems to report deletion events as renames
-                (runtime.GOOS == "darwin" && event.Op&fsnotify.Rename == fsnotify.Rename && !fileExists) {
-              // save file was deleted (by the game)
-              log.Println("deleted file:", event.Name)
+              if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
+                // save file was created or modified
+                log.Println("modified file:", event.Name)
+                beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Backing up slot %d", slotNum), path.Join(assetDir, "/icon.png"))
+                rotateSaves(slotNum)
+                backupSave(slotNum)
+              } else if
+                  event.Op&fsnotify.Remove == fsnotify.Remove ||
+                  // macOS seems to report deletion events as renames
+                  (runtime.GOOS == "darwin" && event.Op&fsnotify.Rename == fsnotify.Rename && !fileExists) {
+                // save file was deleted (by the game)
+                log.Println("deleted file:", event.Name)
 
-              backupFile := path.Join(backupsDir, fmt.Sprintf("SLOT%d-0.sav", slotNum))
-              log.Println(backupFile)
-              _, err := os.Stat(backupFile)
-              log.Println(err)
+                backupFile := path.Join(backupsDir, fmt.Sprintf("SLOT%d-0.sav", slotNum))
+                log.Println(backupFile)
+                _, err := os.Stat(backupFile)
+                log.Println(err)
 
-              if err == nil {
-                restoreSave(slotNum, 0)
-                beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Restored slot %d", slotNum), path.Join(assetDir, "/icon.png"))
-              } else {
-                beeep.Alert("Unrailed Save Scummer", fmt.Sprintf("No backup for slot %d to restore!", slotNum), path.Join(assetDir, "/icon.png"))
+                if err == nil {
+                  restoreSave(slotNum, 0)
+                  beeep.Notify("Unrailed Save Scummer", fmt.Sprintf("Restored slot %d", slotNum), path.Join(assetDir, "/icon.png"))
+                } else {
+                  beeep.Alert("Unrailed Save Scummer", fmt.Sprintf("No backup for slot %d to restore!", slotNum), path.Join(assetDir, "/icon.png"))
+                }
               }
             }
           }
@@ -226,6 +231,8 @@ func rotateSaves(saveSlot int) {
 
 func restoreSave(saveSlot int, backupSlot int) {
   log.Println("Restoring save", saveSlot)
+
+  lastRestoreTime = time.Now().Unix()
 
   // open read / write streams for save backup
   src, err := os.Open(path.Join(backupsDir, fmt.Sprintf("SLOT%d-0.sav", saveSlot)))
