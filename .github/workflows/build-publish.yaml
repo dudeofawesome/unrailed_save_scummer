@@ -13,7 +13,7 @@ jobs:
             output_file: ./bin/unrailed-save-scummer-amd64-mac.dmg
           - image: windows-latest
             output_file: ./bin/unrailed-save-scummer-amd64-windows.exe
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os.image }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
