@@ -4,7 +4,16 @@ on: push
 
 jobs:
   build-and-publish:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - image: ubuntu-latest
+            output_file: ./bin/unrailed-save-scummer-amd64-linux
+          - image: macos-latest
+            output_file: ./bin/unrailed-save-scummer-amd64-mac.dmg
+          - image: windows-latest
+            output_file: ./bin/unrailed-save-scummer-amd64-windows.exe
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -31,10 +40,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: |
-            bin/unrailed-save-scummer-amd64-windows.exe
-            bin/unrailed-save-scummer-amd64-darwin.dmg
-            bin/unrailed-save-scummer-amd64-linux
+          files: ${{ matrix.os.output_file }}}
           prerelease: ${{ env.PRERELEASE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
