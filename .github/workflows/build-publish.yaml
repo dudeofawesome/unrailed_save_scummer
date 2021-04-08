@@ -15,7 +15,8 @@ jobs:
         uses: delgurth/get-package@v5.0.2
         with:
           brew: libicns create-dmg imagemagick
-          apt-get: icnsutils genisoimage imagemagick
+          apt-get: |
+            icnsutils genisoimage imagemagick libgtk-3-dev libappindicator3-dev
       - name: Install Golang
         uses: actions/setup-go@v2
         with:
