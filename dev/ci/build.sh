@@ -35,19 +35,16 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 # build
-out="./bin/unrailed-save-scummer"
-case "$OSTYPE" in
-linux)
-  out="./bin/unrailed-save-scummer-amd64-linux" ;;
-darwin*)
-  out="$mac_app_contents_dir/MacOS/unrailed-save-scummer-amd64-darwin" ;;
-*)
-  echo "OS is $OSTYPE"
-  out="./bin/unrailed-save-scummer-amd64-windows.exe" ;;
-esac
-
 echo "Building binary"
-go build -o "$out" .
+case "$OSTYPE" in
+linux*)
+  go build -o "./bin/unrailed-save-scummer-amd64-linux" .
+  go build -o "./bin/unrailed-save-scummer-amd64-windows.exe" .
+  ;;
+darwin*)
+  go build -o "$mac_app_contents_dir/MacOS/unrailed-save-scummer-amd64-darwin" .
+ ;;
+esac
 
 case "$OSTYPE" in
 darwin*)
@@ -66,7 +63,7 @@ darwin*)
     --no-internet-enable \
     "./bin/unrailed-save-scummer-amd64-mac.dmg" "$mac_app_dir"
   ;;
-linux)
+linux*)
   ;;
 *)
   ;;
