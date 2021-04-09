@@ -40,7 +40,7 @@ linux*)
   echo "Building Linux binary"
   go build -o "./bin/unrailed-save-scummer-amd64-linux" .
   echo "Building Windows binary"
-  go build -o "./bin/unrailed-save-scummer-amd64-windows.exe" .
+  GOOS=windows go build -ldflags -H=windowsgui -o "./bin/unrailed-save-scummer-amd64-windows.exe" .
   ;;
 darwin*)
   echo "Building macOS binary"
